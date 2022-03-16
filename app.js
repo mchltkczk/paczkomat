@@ -1,6 +1,7 @@
 const form = document.forms.package;
 const formPhone = package.phone;
 const formCode = package.code;
+let found;
 
 // btnStart = document.getElementById('btn__start')
 const btnSubmit = document.querySelector(".btn__submit");
@@ -98,52 +99,60 @@ form.addEventListener("submit", (event) => {
 
   console.log("submit");
 
-  fetch("http://localhost:3000/packages")
-    .then((res) => res.json())
-    .then((res) => {
+  fetch("http://localhost:3000/packages/")
+    .then((packages) => packages.json())
+    .then((packages) => {
       console.log("click");
       //wyszukiwanie danych w bazie
-      res.forEach((package) => {
+      packages.find((package) => {
         if (
           package.phoneNumber == formPhone.value &&
-          package.code == formCode.value
-        ) return res = true;
-      });
+          package.code == formCode.value &&
+          package.isPackageReceived == false
+        ) {
+          found = package.id
+        }}
         
-      if (res == true)
-          {
-          //dane znalezione
-          console.log("sukces");
-          //paczka odebrana - koniec || odbierz kolejną
-          dialog.open = true;
-
-          btnSubmit.disabled = true;
-          dialogSuccess.hidden = false;
-          dialogFailed.hidden = true;
-
-          btnDialogGoNext.addEventListener("click", () => {
-            console.log("click");
-            dialog.open = false;
-            formCode.value = "";
-          });
-          //odbierz kolejną
-          // btnSubmit.disabled = true;
-          //koniec na dziś
-        } else {
-          //brak paczki na wpisane dane
-          dialog.open = true;
-          dialogSuccess.hidden = true;
-          dialogFailed.hidden = false;
-          btnDialogCloseTryAgain.addEventListener("click", () => {
-            dialog.open = false;
-            formPhone.classList.remove("error__red");
-            formCode.classList.remove("error__red");
-          });
-
-          form.reset();
-          console.log("Brak paczki dla wpisanych danych...");
-        }
-      
+        )
+        console.log(package.id)
+        if (found == undefined)
+        {
+         //brak paczki na wpisane dane
+         dialog.open = true;
+         dialogSuccess.hidden = true;
+         dialogFailed.hidden = false;
+         btnDialogCloseTryAgain.addEventListener("click", () => {
+           dialog.open = false;
+           formPhone.classList.remove("error__red");
+           formCode.classList.remove("error__red");
+         });
+     
+         form.reset();
+         console.log("Brak paczki dla wpisanych danych...");
+         return 
+       } 
+       else
+       {
+         console.log(found)
+       //dane znalezione
+       console.log("sukces");
+       //paczka odebrana - koniec || odbierz kolejną
+       dialog.open = true;
+       btnSubmit.disabled = true;
+       dialogSuccess.hidden = false;
+       dialogFailed.hidden = true;
+       btnDialogGoNext.addEventListener("click", () => {
+         console.log("click");
+         dialog.open = false;
+         formCode.value = "";
+         isPackageReceived(found)
+   
+       });
+       console.log(found)
+   
+       
+       return 
+     }  
     })
     .catch((error) => {
       //loading error
@@ -151,43 +160,80 @@ form.addEventListener("submit", (event) => {
     })
     .finally((res) => {
       loader.hidden = true;
+      console.log(found)
+
       // loading.hidden = true;
       //close modal when click 'X'
     });
 });
 
+function findPackage(){
+  packages.find((package) => {
+    if (
+      package.phoneNumber == formPhone.value &&
+      package.code == formCode.value
+    ) {
+      found = package.id
+    }}
+    
+    )
+}
 
-fetch("http://localhost:3000/packages", {
+
+function isPackageReceived(id) {
+fetch(`http://localhost:3000/packages/${id}`, {
   method: "PATCH",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    isPackageReceived: true,
+  }),
+
 })
-.then((res) => {
-  console.log(res);
+.then((response) => response.json())
+  .then((json) => console.log(json));
 
-  if (res.ok) {
-    return res.json();
-    } else {
-      return Promise.reject();
-    }
-})
-  .then(() => {
-    console.log('Paczka usunięta')
-  })
-  .catch(() => {
-    console.log('błąd');
-  })
+}
 
+function searchForPackage(found, isPackageReceived) {
 
-  //     "packages": [
-  //         {
-  //     "id": 1,
-  //     "phoneNumber": "505129940",
-  //     "code": "1234",
-  //     "isPackageReceived": false
-  //         }
-  //     ]
-  // }
-
+    if (found == undefined)
+     {
+      //brak paczki na wpisane dane
+      dialog.open = true;
+      dialogSuccess.hidden = true;
+      dialogFailed.hidden = false;
+      btnDialogCloseTryAgain.addEventListener("click", () => {
+        dialog.open = false;
+        formPhone.classList.remove("error__red");
+        formCode.classList.remove("error__red");
+      });
   
+      form.reset();
+      console.log("Brak paczki dla wpisanych danych...");
+      return
+    } 
+    else
+    {
+      console.log(found)
+    //dane znalezione
+    console.log("sukces");
+    //paczka odebrana - koniec || odbierz kolejną
+    dialog.open = true;
+    btnSubmit.disabled = true;
+    dialogSuccess.hidden = false;
+    dialogFailed.hidden = true;
+
+    console.log(found)
+
+    
+    return 
+  }  
+
+}
+
+ 
 //sprawdzanie poprawności danych w polu formularzy
 // formPhone.addEventListener("input", () => {
 //   if (formPhone.value.length == 3) {
@@ -198,30 +244,8 @@ fetch("http://localhost:3000/packages", {
 //   }
 // });
 
-// // const btnSubmit = document.querySelector(".button__submit");
-// // const btnSubmitNext = document.querySelector(".submit__next");
-// const btnFinish = document.querySelector(".dialog__finish");
-// const dialog = document.querySelector('.dial');
-// const packageForm = document.forms.package;
-// // const packageFormCode = packageForm.code;
-// // const packageFormPhone = packageForm.phone__number;
-// let dialogTrigger = true;
-// const wrapper = document.querySelector('.wrapper');
-// const btnStart = document.getElementById("btn__start");
 
-// function createForm() {
-//   const packageForm = document.createElement('form')
-//   packageForm.setAttribute('name','package');
-//   const packageFormPhone = document.createElement('input');
-//   packageFormPhone.setAttribute('name', 'phone__number');
-//   const packageFormCode = document.createElement('input');
-//   packageFormCode.setAttribute('name', 'code');
-//   btnSubmit = document.createElement('button');
-//   btnSubmit.setAttribute('id','btn__submit');
-//   btnSubmit.innerText = 'Odbierz paczkę submit'
-//   wrapper.append(packageForm)
-//   packageForm.append(packageFormPhone, packageFormCode, btnSubmit);
-//   }
+
 
 //ekran startowy
 // btnStart.addEventListener("click", () => {
