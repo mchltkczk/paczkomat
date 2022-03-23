@@ -3,7 +3,7 @@ const formPhone = package.phone;
 const formCode = package.code;
 let found;
 
-btnStart = document.getElementById("btn__start");
+// btnStart = document.getElementById('btn__start')
 const btnSubmit = document.querySelector(".btn__submit");
 const btnDialogFinish = document.querySelector(
   ".dialog__success > .dialog__finish"
@@ -19,62 +19,17 @@ const dialogSuccess = document.querySelector(".dialog__success");
 const dialogFailed = document.querySelector(".dialog__failed");
 const loader = document.querySelector(".loader");
 const loadingError = document.querySelector(".loading__error");
-const successTime = document.querySelector("p > .success__time");
-const input = document.querySelectorAll('input');
-const spanError = document.querySelector('.form__error')
-const reload = () => window.location.reload(true)
-
-function loadingErrorTimeout() {
-  setTimeout(reload, 5000)
-}
-
-
-
-//akceptuj tylko cyfry
-input.forEach(input => {
-  input.addEventListener('keypress', onlyNumbers, false)
-})
-
-function onlyNumbers(event) {
-  let charCode = event.charCode;
-    if (charCode < 48 || charCode > 57) {
-      event.preventDefault();
-      console.log("Tylko cyfry");
-    }
-}
-
-let totalTime = 0;
-let counter = 0;
-let timer;
-
-function countTime() {
-  counter += 10;
-  totalTime = counter / 1000;
-  return
-}
-
-function startCounting() {
-  return timer = setInterval(countTime, 10);
-}
-
-function stopCounting() {
-  clearInterval(timer);
-  totalTime = totalTime.toString();
-  successTime.innerText = totalTime;
-  counter = 0;
-  totalTime = 0;
-}
-
 //ekran startowy
-btnStart.addEventListener("click", () => {
-  form.classList.add('form')
-  btnStart.hidden = true;
-  startCounting();
-});
+// btnStart.addEventListener('click', (event) => {
+//   event.preventDefault();
+//   form.hidden = false;
+//   btnStart.hidden = true;
+// })
 
-validate();
-function validate() {
+valiDate();
+function valiDate() {
   formCode.addEventListener("input", () => {
+    console.log(formCode.value.length);
     if (formCode.value.trim().length < 4) {
       formCode.classList.add("error");
     } else {
@@ -85,6 +40,7 @@ function validate() {
   });
 
   formCode.addEventListener("blur", () => {
+    console.log(formCode.value.length);
     if (formCode.value.trim().length < 4) {
       formCode.classList.add("error");
       formCode.classList.add("error__red");
@@ -96,6 +52,7 @@ function validate() {
   });
 
   formPhone.addEventListener("input", () => {
+    console.log(formPhone.value.length);
     if (formPhone.value.trim().length < 9) {
       formPhone.classList.add("error");
     } else {
@@ -106,6 +63,7 @@ function validate() {
   });
 
   formPhone.addEventListener("blur", () => {
+    console.log(formPhone.value.length);
     if (formPhone.value.trim().length < 9) {
       formPhone.classList.add("error");
       formPhone.classList.add("error__red");
@@ -131,127 +89,133 @@ function validate() {
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
-  stopCounting();
-  //odpalam loader
   loader.hidden = false;
-  //blokada przycisku - puste pola
   if (
     formPhone.value.trim().length === 0 ||
     formCode.value.trim().length === 0
   ) {
     return (btnSubmit.disabled = true);
   }
-  //pobranie danych z API
+
+  console.log("submit");
+
   fetch("http://localhost:3000/packages/")
     .then((packages) => packages.json())
     .then((packages) => {
-      //wyszukiwanie paczki w bazie i sprawdzenie, czy nie została już odebrana
+      console.log("click");
+      //wyszukiwanie danych w bazie
       packages.find((package) => {
         if (
           package.phoneNumber == formPhone.value &&
           package.code == formCode.value &&
           package.isPackageReceived == false
         ) {
-          return found = package.id;
-        }
-      });
-      //brak paczki o przekazanych danych
-      if (found == undefined) {
-        dialog.open = true;
-        dialogSuccess.hidden = true;
-        dialogFailed.hidden = false;
-        //spróbuj ponownie + zdjęcie błędów z inputów
-        btnDialogCloseTryAgain.addEventListener("click", () => {
-        dialog.open = false;
-        formPhone.classList.remove("error__red");
-        formCode.classList.remove("error__red");
-        form.reset();
-        });
-        return;
-      } else {
-        //dane znalezione
-        //paczka odebrana - koniec || odbierz kolejną
-        dialog.open = true;
-        btnSubmit.disabled = true;
-        dialogSuccess.hidden = false;
-        dialogFailed.hidden = true;
-        //odbierz kolejną
-        btnDialogGoNext.addEventListener("click", (event) => {
-          startCounting();
-          event.preventDefault();
-          dialog.open = false;
-          formCode.value = "";
-        //to wszystko na dziś
+          found = package.id
+        }}
+        
+        )
+        console.log(package.id)
+        if (found == undefined)
+        {
+         //brak paczki na wpisane dane
+         dialog.open = true;
+         dialogSuccess.hidden = true;
+         dialogFailed.hidden = false;
+         btnDialogCloseTryAgain.addEventListener("click", () => {
+           dialog.open = false;
+           formPhone.classList.remove("error__red");
+           formCode.classList.remove("error__red");
+         });
+     
+         form.reset();
+         console.log("Brak paczki dla wpisanych danych...");
+         return 
+       } 
+       else
+       {
+         console.log(found)
+       //dane znalezione
+       console.log("sukces");
+       //paczka odebrana - koniec || odbierz kolejną
+       dialog.open = true;
+       btnSubmit.disabled = true;
+       dialogSuccess.hidden = false;
+       dialogFailed.hidden = true;
+       btnDialogGoNext.addEventListener("click", () => {
+         console.log("click");
+         dialog.open = false;
+         formCode.value = "";
+   
+       });
+       console.log(found)
+   
        
-        });
-        btnDialogFinish.addEventListener("click", () => reload())
-        return
-      }
+       return 
+     }  
     })
-    // .then((found) => {
-    //   return isPackageReceived(found);
-    // })
     .catch((error) => {
       //loading error
       loadingError.hidden = false;
-      loadingErrorTimeout()      
-      return
     })
     .finally((res) => {
       loader.hidden = true;
-      isPackageReceived(found);
-      found = undefined;
-      return
-      
+      console.log(found)
+
       // loading.hidden = true;
       //close modal when click 'X'
     });
 });
 
-function findPackage() {
+function findPackage(){
   packages.find((package) => {
     if (
       package.phoneNumber == formPhone.value &&
       package.code == formCode.value
     ) {
-      found = package.id;
-    }
-    return found;
-  });
-  return found;
+      found = package.id
+    }}
+    
+    )
 }
 
+
 function isPackageReceived(id) {
-  fetch(`http://localhost:3000/packages/${id}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      isPackageReceived: true,
-    }),
-  })
-    .then((response) => response.json())
-    // .then((json) => console.log(json));
+fetch(`http://localhost:3000/packages/${id}`, {
+  method: "PATCH",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    isPackageReceived: true,
+  }),
+
+})
+.then((response) => response.json())
+  .then((json) => console.log(json));
+
 }
 
 function searchForPackage(found, isPackageReceived) {
-  if (found == undefined) {
-    //brak paczki na wpisane dane
-    dialog.open = true;
-    dialogSuccess.hidden = true;
-    dialogFailed.hidden = false;
-    btnDialogCloseTryAgain.addEventListener("click", () => {
-      dialog.open = false;
-      formPhone.classList.remove("error__red");
-      formCode.classList.remove("error__red");
-    });
 
-    form.reset();
-    console.log("Brak paczki dla wpisanych danych...");
-    return;
-  } else {
-    console.log(found);
+    if (found == undefined)
+     {
+      //brak paczki na wpisane dane
+      dialog.open = true;
+      dialogSuccess.hidden = true;
+      dialogFailed.hidden = false;
+      btnDialogCloseTryAgain.addEventListener("click", () => {
+        dialog.open = false;
+        formPhone.classList.remove("error__red");
+        formCode.classList.remove("error__red");
+      });
+  
+      form.reset();
+      console.log("Brak paczki dla wpisanych danych...");
+      return
+    } 
+    else
+    {
+      console.log(found)
     //dane znalezione
     console.log("sukces");
     //paczka odebrana - koniec || odbierz kolejną
@@ -259,10 +223,16 @@ function searchForPackage(found, isPackageReceived) {
     btnSubmit.disabled = true;
     dialogSuccess.hidden = false;
     dialogFailed.hidden = true;
-    return;
-  }
+
+    console.log(found)
+
+    
+    return 
+  }  
+
 }
 
+ 
 //sprawdzanie poprawności danych w polu formularzy
 // formPhone.addEventListener("input", () => {
 //   if (formPhone.value.length == 3) {
@@ -272,6 +242,9 @@ function searchForPackage(found, isPackageReceived) {
 //     formPhone.value += " ";
 //   }
 // });
+
+
+
 
 //ekran startowy
 // btnStart.addEventListener("click", () => {

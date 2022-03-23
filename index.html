@@ -10,32 +10,34 @@
   <body>
     <div class="loading__error" hidden>Nie można załadować danych!</div>
       <div class="loader" hidden>Szukam paczki...</div>
-    <dialog id="dialog" class="dial">
-      <div class="dialog__success">
+    <dialog id="dialog">
+      <div class="dialog__success" hidden>
+        <div class="dialog__styling">
       <h3>Paczka odebrana!</h3>
-      <p>Zrobiłeś to w czasie 10 sekund! Czy możemy zrobić dla Ciebie coś jeszcze?</p>
+      <p>Zrobiłeś to w czasie <span class="success__time"></span>s! <p>Czy możemy zrobić dla Ciebie coś jeszcze?</p></p></div>
      <div class="dialog__received" hidden>Paczka została już odebrana, jeżeli chcesz</div>
 
       <button class="dialog__finish">To wszystko na dziś</button>
       <button class="submit__next">Odbierz kolejną paczkę</button>
     </div>
-    <div class="dialog__failed">
+    <div class="dialog__failed" hidden>
+      <div class="dialog__styling">
       <h3>Niepoprawne dane odbioru!</h3>
-      <p>Nie możemy znaleźć paczki dla wprowadzonego numeru telefonu lub kodu. Spróbuj ponownie.</p>
+      <p>Nie możemy znaleźć paczki dla wprowadzonego numeru telefonu lub kodu. Spróbuj ponownie.</p></div>
       <button id="try__again">Spróbuj ponownie</button>
     </div>
     </dialog>
   
     <div class="wrapper">
-      <h1>ENVELO</h1>
+      <h1>Envelo</h1>
       <p>
         Możesz mieć swoją przesyłkę w kilkanaście sekund. Rozpocznij klikając w
         przycisk
       </p>
-      <button id="btn__start" hidden >start</button>
-      <form name="package">
+      <button id="btn__start">Odbierz paczkę</button>
+      <form name="package" hidden>
         <label for="phone__number">Numer telefonu</label>
-        <input type="tel" name="phone" maxlength="9" required class="error" placeholder="Wpisz numer (9 cyfr)"/>
+        <input type="tel" name="phone" maxlength="9" class="error" placeholder="Wpisz numer (9 cyfr)" required/>
         <span class="form__error" >Numer telefonu powinien zawierać 9 cyfr</span>
         <label for="code">Kod odbioru</label>
         <input type="text" name="code" pattern=[0-9]{4} class="error" maxlength="4" placeholder="Podaj kod (4 cyfry)"/>
