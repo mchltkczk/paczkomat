@@ -1,9 +1,9 @@
-const form = document.forms.package;
-const formPhone = package.phone;
-const formCode = package.code;
+const form = document.forms.pckg;
+const formPhone = pckg.phone;
+const formCode = pckg.code;
 let found;
 
-btnStart = document.getElementById("btn__start");
+const btnStart = document.getElementById("btn__start");
 const btnSubmit = document.querySelector(".btn__submit");
 const btnDialogFinish = document.querySelector(
   ".dialog__success > .dialog__finish"
@@ -27,8 +27,6 @@ const reload = () => window.location.reload(true)
 function loadingErrorTimeout() {
   setTimeout(reload, 5000)
 }
-
-
 
 //akceptuj tylko cyfry
 input.forEach(input => {
@@ -115,7 +113,7 @@ function validate() {
     }
     btnUnblock();
   });
-
+}
   function btnUnblock() {
     if (
       formPhone.classList.contains("error") ||
@@ -126,7 +124,7 @@ function validate() {
       return (btnSubmit.disabled = false);
     }
   }
-}
+
 //wyświetl formularz
 
 form.addEventListener("submit", (event) => {
@@ -146,13 +144,13 @@ form.addEventListener("submit", (event) => {
     .then((packages) => packages.json())
     .then((packages) => {
       //wyszukiwanie paczki w bazie i sprawdzenie, czy nie została już odebrana
-      packages.find((package) => {
+      packages.find((pckg) => {
         if (
-          package.phoneNumber == formPhone.value &&
-          package.code == formCode.value &&
-          package.isPackageReceived == false
+          pckg.phoneNumber == formPhone.value &&
+          pckg.code == formCode.value &&
+          pckg.isPackageReceived == false
         ) {
-          return found = package.id;
+          return found = pckg.id;
         }
       });
       //brak paczki o przekazanych danych
@@ -209,12 +207,12 @@ form.addEventListener("submit", (event) => {
 });
 
 function findPackage() {
-  packages.find((package) => {
+  packages.find((pckg) => {
     if (
-      package.phoneNumber == formPhone.value &&
-      package.code == formCode.value
+      pckg.phoneNumber == formPhone.value &&
+      pckg.code == formCode.value
     ) {
-      found = package.id;
+      found = pckg.id;
     }
     return found;
   });
