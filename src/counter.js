@@ -20,4 +20,7 @@ function stopCounting() {
   totalTime = 0;
 }
 
+const successTime = document.querySelector("p > .success__time");
+
+
 export { countTime, startCounting, stopCounting, totalTime, counter, timer }

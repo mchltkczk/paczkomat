@@ -1,14 +1,15 @@
 import {
   onlyNumbers,
-  countTime,
-  startCounting,
-  stopCounting,
   validate,
   btnUnblock,
 } from "./src/validation";
 
 import { isPackageReceived, pckgNotFound, pckgFound } from "./src/searcher";
+import {  countTime,
+  startCounting,
+  stopCounting } from "./src/counter"
 
+  
 //form
 const form = document.forms.pckg;
 const formPhone = pckg.phone;
