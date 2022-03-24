@@ -24,13 +24,17 @@ const input = document.querySelectorAll('input');
 const spanError = document.querySelector('.form__error')
 const reload = () => window.location.reload(true)
 
-function loadingErrorTimeout() {
-  setTimeout(reload, 5000)
+
+function loadingErrorTimeout(time) {
+  setTimeout(reload, time)
 }
+
+btnSubmit.addEventListener('visibilitychange', loadingErrorTimeout(45000))
 
 //akceptuj tylko cyfry
 input.forEach(input => {
   input.addEventListener('keypress', onlyNumbers, false)
+  input.addEventListener('keypress', loadingErrorTimeout(30000))
 })
 
 function onlyNumbers(event) {
@@ -140,7 +144,7 @@ form.addEventListener("submit", (event) => {
     return (btnSubmit.disabled = true);
   }
   //pobranie danych z API
-  fetch("http://localhost:3000/packages/")
+  fetch("http://localhost:3000/packagess/")
     .then((packages) => packages.json())
     .then((packages) => {
       //wyszukiwanie paczki w bazie i sprawdzenie, czy nie została już odebrana
@@ -192,7 +196,7 @@ form.addEventListener("submit", (event) => {
     .catch((error) => {
       //loading error
       loadingError.hidden = false;
-      loadingErrorTimeout()      
+      loadingErrorTimeout('5000')      
       return
     })
     .finally((res) => {
