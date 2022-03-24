@@ -1,6 +1,30 @@
-export { validate, btnUnblock, inputNumbersOnly, onlyNumbers };
+export {
+  validate,
+  btnUnblock,
+  inputNumbersOnly,
+  onlyNumbers,
+  countTime,
+  startCounting,
+  stopCounting,
+};
 
-function validate(btnUnblock, formCode, formPhone) {
+const form = document.forms.pckg;
+const formPhone = pckg.phone;
+const formCode = pckg.code;
+const btnSubmit = document.querySelector(".btn__submit");
+
+function btnUnblock(formPhone, formCode) {
+  if (
+    formPhone.classList.contains("error") ||
+    formCode.classList.contains("error")
+  ) {
+    return (btnSubmit.disabled = true);
+  } else {
+    return (btnSubmit.disabled = false);
+  }
+}
+
+function validate(formPhone, formCode, btnUnblock) {
   formCode.addEventListener("input", () => {
     if (formCode.value.trim().length < 4) {
       formCode.classList.add("error");
@@ -8,7 +32,7 @@ function validate(btnUnblock, formCode, formPhone) {
       formCode.classList.remove("error");
       formCode.classList.remove("error__red");
     }
-    btnUnblock();
+    btnUnblock(formPhone, formCode);
   });
 
   formCode.addEventListener("blur", () => {
@@ -19,7 +43,7 @@ function validate(btnUnblock, formCode, formPhone) {
       formCode.classList.remove("error");
       formCode.classList.remove("error__red");
     }
-    btnUnblock();
+    btnUnblock(formPhone, formCode);
   });
 
   formPhone.addEventListener("input", () => {
@@ -29,7 +53,7 @@ function validate(btnUnblock, formCode, formPhone) {
       formPhone.classList.remove("error");
       formPhone.classList.remove("error__red");
     }
-    btnUnblock();
+    btnUnblock(formPhone, formCode);
   });
 
   formPhone.addEventListener("blur", () => {
@@ -40,18 +64,8 @@ function validate(btnUnblock, formCode, formPhone) {
       formPhone.classList.remove("error");
       formPhone.classList.remove("error__red");
     }
-    btnUnblock();
+    btnUnblock(formPhone, formCode);
   });
-}
-function btnUnblock() {
-  if (
-    formPhone.classList.contains("error") ||
-    formCode.classList.contains("error")
-  ) {
-    return (btnSubmit.disabled = true);
-  } else {
-    return (btnSubmit.disabled = false);
-  }
 }
 
 function inputNumbersOnly(onlyNumbers) {
@@ -67,3 +81,34 @@ function onlyNumbers(event) {
     console.log("Tylko cyfry");
   }
 }
+
+function onlyNumbers(event) {
+  let charCode = event.charCode;
+  if (charCode < 48 || charCode > 57) {
+    event.preventDefault();
+    console.log("Tylko cyfry");
+  }
+}
+
+function countTime() {
+  counter += 10;
+  totalTime = counter / 1000;
+  return;
+}
+
+function startCounting() {
+  return (timer = setInterval(countTime, 10));
+}
+
+function stopCounting() {
+  clearInterval(timer);
+  totalTime = totalTime.toString();
+  successTime.innerText = totalTime;
+  counter = 0;
+  totalTime = 0;
+}
+
+let totalTime = 0;
+let counter = 0;
+let timer;
+const successTime = document.querySelector("p > .success__time");
