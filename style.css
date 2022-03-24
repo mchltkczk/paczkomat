@@ -16,6 +16,12 @@ body {
   background: #fff;
 }
 
+#try__again {
+  position:absolute;
+  left: 50%;
+  transform: translate(-50%, -110%)
+}
+
 .wrapper {
   margin: 0 auto;
   display: flex;
@@ -68,8 +74,12 @@ p {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-bottom: 60px;
 }
 
+.dialog__failed {
+  position: relative;
+}
 /* .dialog__success, .dialog__received, .dialog__failed {
   visibility: hidden;
 }
